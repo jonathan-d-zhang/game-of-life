@@ -1,10 +1,9 @@
-use cpython::{PyResult, Python, py_module_initializer, py_fn};
+use cpython::{py_fn, py_module_initializer, Python};
+use cpython::{PyNone, PyResult, PySet};
 
-py_module_initializer!(game_of_life, |py, m| {
-    m.add(py, "add", py_fn!(py, add(a: u32, b: u32)))?;
-    Ok(())
-});
+py_module_initializer!(game_of_life, |py, m| { Ok(()) });
 
-fn add(_: Python, a: u32, b: u32) -> PyResult<u32> {
-    Ok(super::add(a, b))
+fn mut_set(py: Python, set: PySet) -> PyResult<PyNone> {
+    set.add(py, (-10, 10))?;
+    Ok(PyNone)
 }

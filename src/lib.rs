@@ -1,5 +1,10 @@
+use cpython::{PyResult, PySet};
+use std::collections::HashSet;
+
 pub mod py_interface;
 
-fn add(a: u32, b: u32) -> u32 {
-    a + b
+fn step(alive: HashSet<(i32, i32)>) -> HashSet<(i32, i32)> {
+    let mut res = HashSet::new();
+
+    res
 }
