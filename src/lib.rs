@@ -21,7 +21,7 @@ fn neighbors(point: (i8, i8), with_self: bool) -> Vec<(i8, i8)> {
     res
 }
 
-fn step(alive: HashSet<(i8, i8)>) -> Vec<(i8, i8)> {
+fn step(alive: HashSet<(i8, i8)>) -> HashSet<(i8, i8)> {
     let mut seen = HashSet::new();
     let mut flipping = HashSet::new();
 
@@ -45,15 +45,15 @@ fn step(alive: HashSet<(i8, i8)>) -> Vec<(i8, i8)> {
         }
     }
 
-    let mut temp = Vec::new();
+    let mut temp = HashSet::new();
     for cell in alive.iter() {
         if !flipping.contains(cell) {
-            temp.push(*cell);
+            temp.insert(*cell);
         }
     }
     for cell in flipping.iter() {
         if !alive.contains(cell) {
-            temp.push(*cell);
+            temp.insert(*cell);
         }
     }
 
