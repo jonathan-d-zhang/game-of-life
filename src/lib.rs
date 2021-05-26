@@ -59,3 +59,39 @@ fn step(alive: HashSet<(i8, i8)>) -> Vec<(i8, i8)> {
 
     temp
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_neighbor_with_self() {
+        let res = vec![
+            (0, 0),
+            (-1, -1),
+            (-1, 0),
+            (-1, 1),
+            (0, -1),
+            (0, 1),
+            (1, -1),
+            (1, 0),
+            (1, 1),
+        ];
+        assert_eq!(res, neighbors((0, 0), true));
+    }
+
+    #[test]
+    fn test_neighbor() {
+        let res = vec![
+            (-1, -1),
+            (-1, 0),
+            (-1, 1),
+            (0, -1),
+            (0, 1),
+            (1, -1),
+            (1, 0),
+            (1, 1),
+        ];
+        assert_eq!(res, neighbors((0, 0), false));
+    }
+}
