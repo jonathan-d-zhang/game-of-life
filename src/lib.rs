@@ -1,140 +1,38 @@
-use std::collections::HashSet;
-
 pub mod py_interface;
 
-fn neighbors(point: (i8, i8), with_self: bool) -> Vec<(i8, i8)> {
-    let (x, y) = point;
-    let mut res = Vec::new();
-    if with_self {
-        res.push((x, y));
+const fn generate_alive_lookup() -> [u8; u8::MAX as usize] {
+    let mut lookup = [0; u8::MAX as usize];
+    let mut i: u8 = 0;
+    while i < u8::MAX {
+        let ones = i.count_ones();
+        if ones == 2 || ones == 3 {
+            lookup[i as usize] = 1;
+        }
+
+        i += 1
     }
 
-    for dx in -1..2 {
-        for dy in -1..2 {
-            if dx == dy && dy == 0 {
-                continue;
-            }
-            res.push((x + dx, y + dy));
+    lookup
+}
+
+const fn generate_dead_lookup() -> [u8; u8::MAX as usize] {
+    let mut lookup = [0; u8::MAX as usize];
+    let mut i: u8 = 0;
+    while i < u8::MAX {
+        if i.count_ones() == 3 {
+            lookup[i as usize] = 1;
         }
+
+        i += 1
     }
+
+    lookup
+}
+const DEAD_LOOKUP: [u8; u8::MAX as usize] = generate_dead_lookup();
+const ALIVE_LOOKUP: [u8; u8::MAX as usize] = generate_alive_lookup();
+
+fn step(alive: Vec<Vec<u8>>) -> Vec<Vec<u8>> {
+    let mut res = vec![vec![0; alive[0].len()]; alive.len()];
 
     res
-}
-
-fn step(alive: HashSet<(i8, i8)>) -> HashSet<(i8, i8)> {
-    let mut seen = HashSet::new();
-    let mut flipping = HashSet::new();
-
-    for cell in alive.iter() {
-        for neighbor in neighbors(*cell, true) {
-            if seen.contains(&neighbor) {
-                continue;
-            }
-            seen.insert(neighbor);
-
-            let s = neighbors(neighbor, false)
-                .iter()
-                .filter(|c| alive.contains(c))
-                .count();
-
-            if alive.contains(&neighbor) && (s != 2 && s != 3)
-                || !alive.contains(&neighbor) && (s == 3)
-            {
-                flipping.insert(neighbor);
-            }
-        }
-    }
-
-    let mut temp = HashSet::new();
-    for cell in alive.iter() {
-        if !flipping.contains(cell) {
-            temp.insert(*cell);
-        }
-    }
-    for cell in flipping.iter() {
-        if !alive.contains(cell) {
-            temp.insert(*cell);
-        }
-    }
-
-    temp
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
-
-    #[test]
-    fn test_neighbor_with_self() {
-        let res = vec![
-            (0, 0),
-            (-1, -1),
-            (-1, 0),
-            (-1, 1),
-            (0, -1),
-            (0, 1),
-            (1, -1),
-            (1, 0),
-            (1, 1),
-        ];
-        assert_eq!(res, neighbors((0, 0), true))
-    }
-
-    #[test]
-    fn test_neighbor() {
-        let res = vec![
-            (-1, -1),
-            (-1, 0),
-            (-1, 1),
-            (0, -1),
-            (0, 1),
-            (1, -1),
-            (1, 0),
-            (1, 1),
-        ];
-        assert_eq!(res, neighbors((0, 0), false))
-    }
-
-    #[test]
-    fn test_step_block() {
-        // block still life
-        // * *
-        // * *
-
-        let initial = vec![(0, 0), (0, 1), (1, 0), (1, 1)]
-            .into_iter()
-            .collect::<HashSet<(i8, i8)>>();
-        let after = vec![(0, 0), (0, 1), (1, 0), (1, 1)]
-            .into_iter()
-            .collect::<HashSet<(i8, i8)>>();
-        assert_eq!(after, step(initial))
-    }
-
-    #[test]
-    fn test_step_blinker() {
-        // blinker oscillator
-        // * * *
-        //
-        //   *
-        //   *
-        //   *
-        //
-        // * * *
-
-        let first = vec![(0, 0), (1, 0), (-1, 0)]
-            .into_iter()
-            .collect::<HashSet<(i8, i8)>>();
-        let second = vec![(0, -1), (0, 0), (0, 1)]
-            .into_iter()
-            .collect::<HashSet<(i8, i8)>>();
-        let start = vec![(0, 0), (1, 0), (-1, 0)]
-            .into_iter()
-            .collect::<HashSet<(i8, i8)>>();
-
-        let start = step(start);
-        assert_eq!(second, start);
-
-        let start = step(start);
-        assert_eq!(first, start);
-    }
 }
