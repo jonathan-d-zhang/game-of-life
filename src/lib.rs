@@ -39,7 +39,10 @@ fn step(alive: Vec<Vec<u8>>) -> Vec<Vec<u8>> {
         for x in 0..res[0].len() {
             let mut c = 0;
             for &(dx, dy) in NEIGHBORS.iter() {
-                if alive[y + dy as usize][x + dx as usize] == 1 {
+                if x == 0 || x == res[0].len() - 1 || y == 0 || y == res.len() - 1 {
+                    continue;
+                }
+                if alive[((y as i8) + dy) as usize][(x as i8 + dx) as usize] == 1 {
                     c += 1;
                 }
             }
