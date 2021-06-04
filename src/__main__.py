@@ -4,28 +4,32 @@ from . import game_of_life
 SQR_LEN = 10
 SCREEN_LEN = 512
 
-squares = [
-    (0, 0),
-    (1, 0),
-    (2, 0),
-    (2, 1),
-    (1, 2),
-]
+LIST_LEN = 15
 
+squares = [[0] * LIST_LEN for _ in range(LIST_LEN)]
+
+squares[5][5] = 1
+squares[6][5] = 1
+squares[7][5] = 1
+
+def map_sc(n: int) -> int:
+    return n * SQR_LEN + SCREEN_LEN // 2
 
 def draw(_):
     global squares
     arcade.start_render()
     squares = game_of_life.step(squares)
-    for x, y in squares:
-        x = x * SQR_LEN + SCREEN_LEN // 2
-        y = y * SQR_LEN + SCREEN_LEN // 2
-        arcade.draw_lrtb_rectangle_filled(
-            x, x + SQR_LEN, y + SQR_LEN, y, arcade.color.BLACK
-        )
-        arcade.draw_lrtb_rectangle_outline(
-            x, x + SQR_LEN, y + SQR_LEN, y, arcade.color.WHITE
-        )
+    for y in range(LIST_LEN):
+        y -= LIST_LEN // 2
+        for x in range(LIST_LEN):
+            x -= LIST_LEN // 2
+            if squares[y][x] == 1:
+                arcade.draw_lrtb_rectangle_filled(
+                   map_sc(x) , map_sc(x) + SQR_LEN, map_sc(y) + SQR_LEN, map_sc(y), arcade.color.BLACK
+                )
+                arcade.draw_lrtb_rectangle_outline(
+                   map_sc(x) , map_sc(x) + SQR_LEN, map_sc(y) + SQR_LEN, map_sc(y), arcade.color.BLACK
+                )
 
 
 arcade.open_window(SCREEN_LEN, SCREEN_LEN, "test")
