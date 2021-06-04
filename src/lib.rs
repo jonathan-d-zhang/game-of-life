@@ -21,7 +21,7 @@ const DEAD_LOOKUP: [u8; u8::MAX as usize] = generate_lookup(false);
 const ALIVE_LOOKUP: [u8; u8::MAX as usize] = generate_lookup(true);
 */
 
-const NEIGHBORS: [(i8, i8); 8] = [
+const NEIGHBORS: [(i32, i32); 8] = [
     (-1, -1),
     (-1, 0),
     (-1, 1),
@@ -35,14 +35,17 @@ const NEIGHBORS: [(i8, i8); 8] = [
 fn step(alive: Vec<Vec<u8>>) -> Vec<Vec<u8>> {
     let mut res = vec![vec![0; alive[0].len()]; alive.len()];
 
-    for y in 0..res.len() {
-        for x in 0..res[0].len() {
+    let y_len = res.len();
+    let x_len = res[0].len();
+
+    for y in 0..y_len {
+        for x in 0..x_len {
             let mut c = 0;
+
             for &(dx, dy) in NEIGHBORS.iter() {
-                if x == 0 || x == res[0].len() - 1 || y == 0 || y == res.len() - 1 {
-                    continue;
-                }
-                if alive[((y as i8) + dy) as usize][((x as i8) + dx) as usize] == 1 {
+                let ny = (y as i32 + dy).rem_euclid(y_len as i32) as usize;
+                let nx = (x as i32 + dx).rem_euclid(x_len as i32) as usize;
+                if alive[ny][nx] == 1 {
                     c += 1;
                 }
             }
