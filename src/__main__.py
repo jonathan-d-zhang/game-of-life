@@ -1,48 +1,57 @@
 import arcade
 from . import game_of_life
 
-SQR_LEN = 10
+SQR_LEN = 16
 SCREEN_LEN = 512
 
-LIST_LEN = 15
+LIST_LEN = SCREEN_LEN // SQR_LEN
 
 squares = [[0] * LIST_LEN for _ in range(LIST_LEN)]
 
-squares[5][5] = 1
-squares[5][6] = 1
-squares[5][7] = 1
-squares[4][7] = 1
-squares[3][6] = 1
+# glider
+squares[10][10] = 1
+squares[10][11] = 1
+squares[10][12] = 1
+squares[11][12] = 1
+squares[12][11] = 1
+
+# block
+squares[0][0] = 1
+squares[0][-1] = 1
+squares[-1][0] = 1
+squares[-1][-1] = 1
 
 
 def map_sc(n: int) -> int:
-    return n * SQR_LEN + SCREEN_LEN // 2
+    return (n - LIST_LEN // 2) * SQR_LEN + SCREEN_LEN // 2
 
 
 def draw(_):
     global squares
     arcade.start_render()
-    squares = game_of_life.step(squares)
     for y in range(LIST_LEN):
+        my = map_sc(y)
         for x in range(LIST_LEN):
+            mx = map_sc(x)
             if squares[y][x] == 1:
                 arcade.draw_lrtb_rectangle_filled(
-                    map_sc(x),
-                    map_sc(x) + SQR_LEN,
-                    map_sc(y) + SQR_LEN,
-                    map_sc(y),
+                    mx,
+                    mx + SQR_LEN,
+                    my + SQR_LEN,
+                    my,
                     arcade.color.BLACK,
                 )
                 arcade.draw_lrtb_rectangle_outline(
-                    map_sc(x),
-                    map_sc(x) + SQR_LEN,
-                    map_sc(y) + SQR_LEN,
-                    map_sc(y),
-                    arcade.color.BLACK,
+                    mx,
+                    mx + SQR_LEN,
+                    my + SQR_LEN,
+                    my,
+                    arcade.color.WHITE,
                 )
+    squares = game_of_life.step(squares)
 
 
 arcade.open_window(SCREEN_LEN, SCREEN_LEN, "test")
 arcade.set_background_color(arcade.color.WHITE)
-arcade.schedule(draw, 0.25)
+arcade.schedule(draw, 0.1)
 arcade.run()
