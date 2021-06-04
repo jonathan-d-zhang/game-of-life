@@ -42,7 +42,7 @@ fn step(alive: Vec<Vec<u8>>) -> Vec<Vec<u8>> {
                 if x == 0 || x == res[0].len() - 1 || y == 0 || y == res.len() - 1 {
                     continue;
                 }
-                if alive[((y as i8) + dy) as usize][(x as i8 + dx) as usize] == 1 {
+                if alive[((y as i8) + dy) as usize][((x as i8) + dx) as usize] == 1 {
                     c += 1;
                 }
             }
