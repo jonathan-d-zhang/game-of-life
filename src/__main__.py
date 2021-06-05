@@ -7,35 +7,35 @@ SCREEN_LEN = 512
 
 LIST_LEN = SCREEN_LEN // SQR_LEN
 
-squares = [[0] * LIST_LEN for _ in range(LIST_LEN)]
-
-# glider
-squares[10][10] = 1
-squares[10][11] = 1
-squares[10][12] = 1
-squares[11][12] = 1
-squares[12][11] = 1
-
-# block
-squares[0][0] = 1
-squares[0][-1] = 1
-squares[-1][0] = 1
-squares[-1][-1] = 1
-
 
 class Game(arcade.Window):
+
     def __init__(self):
         super().__init__(SCREEN_LEN, SCREEN_LEN, "Conway's Game of Life")
         arcade.set_background_color(arcade.color.WHITE)
+        self.squares = [[0] * LIST_LEN for _ in range(LIST_LEN)]
+
+        # glider
+        self.squares[10][10] = 1
+        self.squares[10][11] = 1
+        self.squares[10][12] = 1
+        self.squares[11][12] = 1
+        self.squares[12][11] = 1
+        
+        # block
+        self.squares[0][0] = 1
+        self.squares[0][-1] = 1
+        self.squares[-1][0] = 1
+        self.squares[-1][-1] = 1
+
 
     def on_draw(self):
-        global squares
         arcade.start_render()
         for y in range(LIST_LEN):
             my = map_sc(y)
             for x in range(LIST_LEN):
                 mx = map_sc(x)
-                if squares[y][x] == 1:
+                if self.squares[y][x] == 1:
                     arcade.draw_lrtb_rectangle_filled(
                         mx,
                         mx + SQR_LEN,
@@ -50,8 +50,9 @@ class Game(arcade.Window):
                         my,
                         arcade.color.WHITE,
                     )
+
+        self.squares = game_of_life.step(self.squares)
         time.sleep(.1)
-        squares = game_of_life.step(squares)
 
 
 def map_sc(n: int) -> int:
