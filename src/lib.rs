@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 pub mod py_interface;
 
-fn neighbors(point: (i8, i8), with_self: bool) -> Vec<(i8, i8)> {
+fn neighbors(point: (i32, i32), with_self: bool) -> Vec<(i32, i32)> {
     let (x, y) = point;
     let mut res = Vec::new();
     if with_self {
@@ -21,7 +21,7 @@ fn neighbors(point: (i8, i8), with_self: bool) -> Vec<(i8, i8)> {
     res
 }
 
-fn step(alive: HashSet<(i8, i8)>) -> HashSet<(i8, i8)> {
+fn step(alive: HashSet<(i32, i32)>) -> HashSet<(i32, i32)> {
     let mut seen = HashSet::new();
     let mut flipping = HashSet::new();
 
