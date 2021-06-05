@@ -6,6 +6,7 @@ SQR_LEN = 16
 SCREEN_LEN = 512
 
 LIST_LEN = SCREEN_LEN // SQR_LEN
+EDGE = SQR_LEN // 8
 
 
 class Game(arcade.Window):
@@ -27,6 +28,7 @@ class Game(arcade.Window):
         self.squares[0][-1] = 1
         self.squares[-1][0] = 1
         self.squares[-1][-1] = 1
+        self.paused: bool = True
 
 
     def on_draw(self):
@@ -37,21 +39,14 @@ class Game(arcade.Window):
                 mx = map_sc(x)
                 if self.squares[y][x] == 1:
                     arcade.draw_lrtb_rectangle_filled(
-                        mx,
-                        mx + SQR_LEN,
-                        my + SQR_LEN,
-                        my,
+                        mx + EDGE,
+                        mx + SQR_LEN - EDGE,
+                        my + SQR_LEN - EDGE,
+                        my + EDGE,
                         arcade.color.BLACK,
                     )
-                    arcade.draw_lrtb_rectangle_outline(
-                        mx,
-                        mx + SQR_LEN,
-                        my + SQR_LEN,
-                        my,
-                        arcade.color.WHITE,
-                    )
-
-        self.squares = game_of_life.step(self.squares)
+        if not self.paused:
+            self.squares = game_of_life.step(self.squares)
         time.sleep(.1)
 
 
