@@ -60,3 +60,4 @@ def map_sc(n: int) -> int:
 
 window = Game()
 arcade.run()
+
