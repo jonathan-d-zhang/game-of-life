@@ -37,6 +37,8 @@ class Game(arcade.Window):
             center_y=SCREEN_LEN - 35,
         )
 
+        self.prev_drawn_squares: dict[(int, int), arcade.Sprite] = {}
+
         self.paused: bool = False
         self.editing: bool = False
 
@@ -44,18 +46,19 @@ class Game(arcade.Window):
         arcade.start_render()
         self.pause_button.draw()
         self.edit_button.draw()
+        square_sprites = arcade.SpriteList(is_static=True)
         for y in range(LIST_LEN):
             my = map_sc(y)
             for x in range(LIST_LEN):
-                mx = map_sc(x)
                 if self.squares[y][x] == 1:
-                    arcade.draw_lrtb_rectangle_filled(
-                        mx + EDGE,
-                        mx + SQR_LEN - EDGE,
-                        my + SQR_LEN - EDGE,
-                        my + EDGE,
-                        arcade.color.BLACK,
-                    )
+                    mx = map_sc(x)
+                    if (mx, my) in self.prev_drawn_squares:
+                        square_sprites.append(self.prev_drawn_squares[mx, my])
+                    else:
+                        square = create_square_at_loc(mx, my)
+                        self.prev_drawn_squares[mx, my] = square
+                        square_sprites.append(square)
+        square_sprites.draw()
         if not self.paused:
             self.squares = game_of_life.step(self.squares)
         time.sleep(0.1)
@@ -82,6 +85,13 @@ class Game(arcade.Window):
 
 def map_sc(n: int) -> int:
     return (n - LIST_LEN // 2) * SQR_LEN + SCREEN_LEN // 2
+
+
+def create_square_at_loc(x: int, y: int) -> arcade.Sprite:
+    sqr = arcade.SpriteSolidColor(SQR_LEN - EDGE, SQR_LEN - EDGE, arcade.color.BLACK)
+    sqr.center_x = x + EDGE
+    sqr.center_y = y + EDGE
+    return sqr
 
 
 window = Game()
