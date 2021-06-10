@@ -1,25 +1,17 @@
 import arcade
 from . import game_of_life
+from random import randrange
 
-SQR_LEN = 16
-SCREEN_LEN = 512
+SQR_LEN = 10
+SCREEN_LEN = 2000
 
 LIST_LEN = SCREEN_LEN // SQR_LEN
 
 squares = [[0] * LIST_LEN for _ in range(LIST_LEN)]
 
-# glider
-squares[10][10] = 1
-squares[10][11] = 1
-squares[10][12] = 1
-squares[11][12] = 1
-squares[12][11] = 1
-
-# block
-squares[0][0] = 1
-squares[0][-1] = 1
-squares[-1][0] = 1
-squares[-1][-1] = 1
+# select up to 5000 initial points
+for _ in range(5000):
+    squares[randrange(LIST_LEN)][randrange(LIST_LEN)] = 1
 
 
 def map_sc(n: int) -> int:
