@@ -24,14 +24,14 @@ class Game(arcade.Window):
         self.squares[-1][-1] = 1
 
         self.pause_button = arcade.Sprite(
-            "src/ui/play.png",
+            "src/images/play.png",
             scale=0.08,
             center_x=SCREEN_LEN - 60,
             center_y=SCREEN_LEN - 35,
         )
 
         self.edit_button = arcade.Sprite(
-            "src/ui/edit.png",
+            "src/images/edit.png",
             scale=0.05,
             center_x=SCREEN_LEN - 120,
             center_y=SCREEN_LEN - 35,
@@ -40,15 +40,16 @@ class Game(arcade.Window):
         self.paused: bool = False
         self.editing: bool = False
 
+        self.lru = []
+
     def on_draw(self):
         arcade.start_render()
-        self.pause_button.draw()
-        self.edit_button.draw()
+
         for y in range(LIST_LEN):
             my = map_sc(y)
             for x in range(LIST_LEN):
                 mx = map_sc(x)
-                if self.squares[y][x] == 1:
+                if self.squares[y][x]:
                     arcade.draw_lrtb_rectangle_filled(
                         mx + EDGE,
                         mx + SQR_LEN - EDGE,
@@ -56,8 +57,18 @@ class Game(arcade.Window):
                         my + EDGE,
                         arcade.color.BLACK,
                     )
+
+        if self.editing:
+            self.draw_infobox("EDITING")
+        elif self.paused:
+            self.draw_infobox("PAUSED")
+
+        self.pause_button.draw()
+        self.edit_button.draw()
+
         if not self.paused:
             self.squares = game_of_life.step(self.squares)
+
         time.sleep(0.1)
 
     def on_mouse_press(self, x, y, _button, _modifiers):
@@ -75,9 +86,45 @@ class Game(arcade.Window):
             if self.paused:
                 self.editing = True
         elif self.editing:
-            i = y // 16
-            j = x // 16
+            i = int(y / 16)
+            j = int(x / 16)
             self.squares[i][j] = not self.squares[i][j]
+
+
+    def draw_infobox(self, text: str) -> None:
+        arcade.draw_rectangle_filled(
+            center_x=SCREEN_LEN // 2,
+            center_y=SCREEN_LEN * .08,
+            width=SCREEN_LEN // 3,
+            height=30,
+            color=arcade.color.WHITE,
+        )
+        arcade.draw_rectangle_outline(
+            center_x=SCREEN_LEN // 2,
+            center_y=SCREEN_LEN * .08,
+            width=SCREEN_LEN // 3,
+            height=30,
+            color=arcade.color.BLACK,
+        )
+        arcade.draw_text(
+            text,
+            SCREEN_LEN // 2,
+            SCREEN_LEN * .08,
+            arcade.color.BLACK,
+            20,
+            anchor_x="center",
+            anchor_y="center",
+        )
+
+#    def on_mouse_drag(self, x, y, dx, dy, _buttons, _modifiers):
+#        if self.editing:
+#            i = int((y + dy) / 16)
+#            j = int((x + dx) / 16)
+#            if (i, j) not in self.lru:
+#                self.squares[i][j] = not self.squares[i][j]
+#            if len(self.lru) == 2:
+#                self.lru.pop(0)
+#            self.lru.append((i, j))
 
 
 def map_sc(n: int) -> int:
