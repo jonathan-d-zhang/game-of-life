@@ -103,10 +103,10 @@ mod test {
 
         let initial = vec![(0, 0), (0, 1), (1, 0), (1, 1)]
             .into_iter()
-            .collect::<HashSet<(i8, i8)>>();
+            .collect::<HashSet<(i32, i32)>>();
         let after = vec![(0, 0), (0, 1), (1, 0), (1, 1)]
             .into_iter()
-            .collect::<HashSet<(i8, i8)>>();
+            .collect::<HashSet<(i32, i32)>>();
         assert_eq!(after, step(initial))
     }
 
@@ -123,13 +123,13 @@ mod test {
 
         let first = vec![(0, 0), (1, 0), (-1, 0)]
             .into_iter()
-            .collect::<HashSet<(i8, i8)>>();
+            .collect::<HashSet<(i32, i32)>>();
         let second = vec![(0, -1), (0, 0), (0, 1)]
             .into_iter()
-            .collect::<HashSet<(i8, i8)>>();
+            .collect::<HashSet<(i32, i32)>>();
         let start = vec![(0, 0), (1, 0), (-1, 0)]
             .into_iter()
-            .collect::<HashSet<(i8, i8)>>();
+            .collect::<HashSet<(i32, i32)>>();
 
         let start = step(start);
         assert_eq!(second, start);
