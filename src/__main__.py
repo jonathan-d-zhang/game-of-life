@@ -37,7 +37,7 @@ class Game(arcade.Window):
             center_y=SCREEN_LEN - 35,
         )
 
-        self.prev_drawn_squares: dict[(int, int), arcade.Sprite] = {}
+        self.prev_drawn_squares: dict[tuple[int, int], arcade.Sprite] = {}
 
         self.paused: bool = False
         self.editing: bool = False
@@ -89,8 +89,8 @@ def map_sc(n: int) -> int:
 
 def create_square_at_loc(x: int, y: int) -> arcade.Sprite:
     sqr = arcade.SpriteSolidColor(SQR_LEN - EDGE, SQR_LEN - EDGE, arcade.color.BLACK)
-    sqr.center_x = x + EDGE
-    sqr.center_y = y + EDGE
+    sqr.center_x = x + SQR_LEN // 2
+    sqr.center_y = y + SQR_LEN // 2
     return sqr
 
 
