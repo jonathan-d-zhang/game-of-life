@@ -23,21 +23,13 @@ class Game(arcade.Window):
         self.squares[-1][0] = 1
         self.squares[-1][-1] = 1
 
-        self.pause_button = arcade.Sprite(
-            "src/images/play.png",
-            scale=0.08,
+        self.edit_button = arcade.Sprite(
+            "src/images/edit.png",
+            scale=0.05,
             center_x=SCREEN_LEN - 60,
             center_y=SCREEN_LEN - 35,
         )
 
-        self.edit_button = arcade.Sprite(
-            "src/images/edit.png",
-            scale=0.05,
-            center_x=SCREEN_LEN - 120,
-            center_y=SCREEN_LEN - 35,
-        )
-
-        self.paused: bool = False
         self.editing: bool = False
 
         self.lru = []
@@ -60,35 +52,26 @@ class Game(arcade.Window):
 
         if self.editing:
             self.draw_infobox("EDITING")
-        elif self.paused:
-            self.draw_infobox("PAUSED")
 
-        self.pause_button.draw()
         self.edit_button.draw()
 
-        if not self.paused:
+        if not self.editing:
             self.squares = game_of_life.step(self.squares)
 
         time.sleep(0.1)
 
     def on_mouse_press(self, x, y, _button, _modifiers):
+        print(self.editing)
         if (
-            self.pause_button.left <= x <= self.pause_button.right
-            and self.pause_button.bottom <= y <= self.pause_button.top
-        ):
-            self.paused = not self.paused
-            if not self.paused:
-                self.editing = False
-        elif (
             self.edit_button.left <= x <= self.edit_button.right
             and self.edit_button.bottom <= y <= self.edit_button.top
         ):
-            if self.paused:
-                self.editing = True
+            self.editing = not self.editing
         elif self.editing:
             i = int(y / 16)
             j = int(x / 16)
             self.squares[i][j] = not self.squares[i][j]
+        print(self.editing)
 
 
     def draw_infobox(self, text: str) -> None:
