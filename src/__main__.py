@@ -61,17 +61,15 @@ class Game(arcade.Window):
         time.sleep(0.1)
 
     def on_mouse_press(self, x, y, _button, _modifiers):
-        print(self.editing)
         if (
             self.edit_button.left <= x <= self.edit_button.right
             and self.edit_button.bottom <= y <= self.edit_button.top
         ):
             self.editing = not self.editing
         elif self.editing:
-            i = int(y / 16)
-            j = int(x / 16)
+            i = int(y / SQR_LEN)
+            j = int(x / SQR_LEN)
             self.squares[i][j] = not self.squares[i][j]
-        print(self.editing)
 
 
     def draw_infobox(self, text: str) -> None:
