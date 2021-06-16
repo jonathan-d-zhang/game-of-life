@@ -23,6 +23,13 @@ class Game(arcade.Window):
         self.squares[-1][0] = 1
         self.squares[-1][-1] = 1
 
+
+        self.sprite_squares = [
+            create_square_at_loc(map_sc(x), map_sc(y))
+            for x in range(LIST_LEN)
+            for y in range(LIST_LEN)
+        ]
+
         self.pause_button = arcade.Sprite(
             "src/ui/play.png",
             scale=0.08,
@@ -37,8 +44,6 @@ class Game(arcade.Window):
             center_y=SCREEN_LEN - 35,
         )
 
-        self.prev_drawn_squares: dict[tuple[int, int], arcade.Sprite] = {}
-
         self.paused: bool = False
         self.editing: bool = False
 
@@ -48,16 +53,9 @@ class Game(arcade.Window):
         self.edit_button.draw()
         square_sprites = arcade.SpriteList(is_static=True)
         for y in range(LIST_LEN):
-            my = map_sc(y)
             for x in range(LIST_LEN):
                 if self.squares[y][x] == 1:
-                    mx = map_sc(x)
-                    if (mx, my) in self.prev_drawn_squares:
-                        square_sprites.append(self.prev_drawn_squares[mx, my])
-                    else:
-                        square = create_square_at_loc(mx, my)
-                        self.prev_drawn_squares[mx, my] = square
-                        square_sprites.append(square)
+                        square_sprites.append(self.sprite_squares[y * LIST_LEN + x])
         square_sprites.draw()
         if not self.paused:
             self.squares = game_of_life.step(self.squares)
