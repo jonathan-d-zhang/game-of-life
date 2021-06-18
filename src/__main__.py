@@ -103,7 +103,7 @@ class Game(arcade.Window):
         arcade.draw_text(
             text,
             SCREEN_LEN // 2,
-            SCREEN_LEN * .08,
+            SCREEN_LEN * 0.08,
             arcade.color.BLACK,
             20,
             anchor_x="center",
@@ -119,7 +119,6 @@ class Game(arcade.Window):
 #            if len(self.lru) == 2:
 #                self.lru.pop(0)
 #            self.lru.append((i, j))
-
 
 def map_sc(n: int) -> int:
     return (n - LIST_LEN // 2) * SQR_LEN + SCREEN_LEN // 2
