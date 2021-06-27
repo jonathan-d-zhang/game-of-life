@@ -6,8 +6,8 @@ from .constants import *
 
 class Game(arcade.Window):
     def __init__(self):
-        super().__init__(SCREEN_LEN, SCREEN_LEN, "Conway's Game of Life")
-        arcade.set_background_color(arcade.color.WHITE)
+        super().__init__(WINDOW_LEN, WINDOW_LEN, "Conway's Game of Life")
+        arcade.set_background_color(arcade.color.ASH_GREY)
         self.squares = [[0] * LIST_LEN for _ in range(LIST_LEN)]
 
         # glider
@@ -26,15 +26,15 @@ class Game(arcade.Window):
         self.edit_button = arcade.Sprite(
             "src/images/edit.png",
             scale=0.05,
-            center_x=SCREEN_LEN - 120,
-            center_y=SCREEN_LEN - 35,
+            center_x=WINDOW_LEN - 110,
+            center_y=WINDOW_LEN - 32,
         )
 
         self.exit_button = arcade.Sprite(
             "src/images/exit.png",
             scale=0.30,
-            center_x=SCREEN_LEN - 60,
-            center_y=SCREEN_LEN - 35,
+            center_x=WINDOW_LEN - 50,
+            center_y=WINDOW_LEN - 32,
         )
 
         self.editing: bool = False
@@ -43,6 +43,14 @@ class Game(arcade.Window):
 
     def on_draw(self):
         arcade.start_render()
+
+        arcade.draw_rectangle_filled(
+            center_x=WINDOW_LEN // 2,
+            center_y=WINDOW_LEN // 2,
+            width=SCREEN_LEN,
+            height=SCREEN_LEN,
+            color=arcade.color.WHITE,
+        )
 
         for y in range(LIST_LEN):
             my = map_sc(y)
@@ -59,7 +67,7 @@ class Game(arcade.Window):
 
         if self.editing:
             self.draw_infobox("EDITING")
-        
+
         self.edit_button.draw()
         self.exit_button.draw()
 
@@ -79,31 +87,24 @@ class Game(arcade.Window):
             and self.exit_button.bottom <= y <= self.exit_button.top
         ):
             arcade.window_commands.close_window()
-        
+
         elif self.editing:
             i = int(y / SQR_LEN)
             j = int(x / SQR_LEN)
             self.squares[i][j] = not self.squares[i][j]
 
     def draw_infobox(self, text: str) -> None:
-        arcade.draw_rectangle_filled(
-            center_x=SCREEN_LEN // 2,
-            center_y=SCREEN_LEN * 0.08,
-            width=SCREEN_LEN // 3,
-            height=30,
-            color=arcade.color.WHITE,
-        )
         arcade.draw_rectangle_outline(
-            center_x=SCREEN_LEN // 2,
-            center_y=SCREEN_LEN * 0.08,
+            center_x=WINDOW_LEN // 2,
+            center_y=WINDOW_LEN * 0.05,
             width=SCREEN_LEN // 3,
             height=30,
             color=arcade.color.BLACK,
         )
         arcade.draw_text(
             text,
-            SCREEN_LEN // 2,
-            SCREEN_LEN * 0.08,
+            WINDOW_LEN // 2,
+            WINDOW_LEN * 0.05,
             arcade.color.BLACK,
             20,
             anchor_x="center",
@@ -120,8 +121,9 @@ class Game(arcade.Window):
 #                self.lru.pop(0)
 #            self.lru.append((i, j))
 
+
 def map_sc(n: int) -> int:
-    return (n - LIST_LEN // 2) * SQR_LEN + SCREEN_LEN // 2
+    return (n - LIST_LEN // 2) * SQR_LEN + int((WINDOW_LEN - SCREEN_LEN) * 2.5)
 
 
 window = Game()
