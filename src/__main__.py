@@ -91,7 +91,8 @@ class Game(arcade.Window):
             if i in range(LIST_LEN) and j in range(LIST_LEN):
                 self.squares[i][j] = not self.squares[i][j]
 
-    def draw_infobox(self, text: str) -> None:
+    @staticmethod
+    def draw_infobox(text: str) -> None:
         arcade.draw_rectangle_outline(
             center_x=WINDOW_LEN // 2,
             center_y=WINDOW_LEN * 0.05,
