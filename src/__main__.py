@@ -88,7 +88,8 @@ class Game(arcade.Window):
         elif self.editing:
             i = map_index(y)
             j = map_index(x)
-            self.squares[i][j] = not self.squares[i][j]
+            if i in range(LIST_LEN) and j in range(LIST_LEN):
+                self.squares[i][j] = not self.squares[i][j]
 
     def draw_infobox(self, text: str) -> None:
         arcade.draw_rectangle_outline(
