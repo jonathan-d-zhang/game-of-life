@@ -89,8 +89,8 @@ class Game(arcade.Window):
             arcade.window_commands.close_window()
 
         elif self.editing:
-            i = int(y / SQR_LEN)
-            j = int(x / SQR_LEN)
+            i = map_index(y)
+            j = map_index(x)
             self.squares[i][j] = not self.squares[i][j]
 
     def draw_infobox(self, text: str) -> None:
@@ -125,6 +125,8 @@ class Game(arcade.Window):
 def map_sc(n: int) -> int:
     return (n - LIST_LEN // 2) * SQR_LEN + int((WINDOW_LEN - SCREEN_LEN) * 2.5)
 
+def map_index(n: int) -> int:
+    return (n - int((WINDOW_LEN - SCREEN_LEN) * 2.5)) // SQR_LEN + LIST_LEN // 2
 
 window = Game()
 arcade.run()
