@@ -38,8 +38,7 @@ class Game(arcade.Window):
         )
 
         self.editing: bool = False
-
-        self.lru = []
+        self.counter: int = 0
 
     def on_draw(self):
         arcade.start_render()
@@ -52,27 +51,25 @@ class Game(arcade.Window):
             color=arcade.color.WHITE,
         )
 
-        for y in range(LIST_LEN):
-            my = map_sc(y)
-            for x in range(LIST_LEN):
-                mx = map_sc(x)
-                if self.squares[y][x]:
-                    arcade.draw_lrtb_rectangle_filled(
-                        mx + EDGE,
-                        mx + SQR_LEN - EDGE,
-                        my + SQR_LEN - EDGE,
-                        my + EDGE,
-                        arcade.color.BLACK,
-                    )
+        self.draw_squares()
 
         if self.editing:
             self.draw_infobox("EDITING")
+        else:
+            self.squares = game_of_life.step(self.squares)
+            self.counter += 1
+
+        arcade.draw_text(
+            f"Step {self.counter}",
+            WINDOW_LEN * 0.02,
+            WINDOW_LEN * 0.95,
+            arcade.color.BLACK,
+            20,
+            anchor_y="center",
+        )
 
         self.edit_button.draw()
         self.exit_button.draw()
-
-        if not self.editing:
-            self.squares = game_of_life.step(self.squares)
 
         time.sleep(0.1)
 
@@ -110,6 +107,20 @@ class Game(arcade.Window):
             anchor_x="center",
             anchor_y="center",
         )
+
+    def draw_squares(self):
+        for y in range(LIST_LEN):
+            my = map_sc(y)
+            for x in range(LIST_LEN):
+                mx = map_sc(x)
+                if self.squares[y][x]:
+                    arcade.draw_lrtb_rectangle_filled(
+                        mx + EDGE,
+                        mx + SQR_LEN - EDGE,
+                        my + SQR_LEN - EDGE,
+                        my + EDGE,
+                        arcade.color.BLACK,
+                    )
 
 #    def on_mouse_drag(self, x, y, dx, dy, _buttons, _modifiers):
 #        if self.editing:
