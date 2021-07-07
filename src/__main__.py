@@ -88,7 +88,7 @@ class Game(arcade.Window):
         elif self.editing:
             i = map_index(y)
             j = map_index(x)
-            if i in range(LIST_LEN) and j in range(LIST_LEN):
+            if 0 <= i < LIST_LEN and 0 <= j < LIST_LEN:
                 self.squares[i][j] = not self.squares[i][j]
 
     @staticmethod
