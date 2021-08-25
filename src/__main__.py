@@ -1,34 +1,145 @@
+import time
 import arcade
 from . import game_of_life
-
-SQR_LEN = 10
-SCREEN_LEN = 512
-
-squares = [
-    (0, 0),
-    (1, 0),
-    (2, 0),
-    (2, 1),
-    (1, 2),
-]
+from .constants import *
 
 
-def draw(_):
-    global squares
-    arcade.start_render()
-    squares = game_of_life.step(squares)
-    for x, y in squares:
-        x = x * SQR_LEN + SCREEN_LEN // 2
-        y = y * SQR_LEN + SCREEN_LEN // 2
-        arcade.draw_lrtb_rectangle_filled(
-            x, x + SQR_LEN, y + SQR_LEN, y, arcade.color.BLACK
+class Game(arcade.Window):
+    def __init__(self):
+        super().__init__(WINDOW_LEN, WINDOW_LEN, "Conway's Game of Life")
+        arcade.set_background_color(arcade.color.ASH_GREY)
+        self.squares = [[0] * LIST_LEN for _ in range(LIST_LEN)]
+
+        # glider
+        self.squares[10][10] = 1
+        self.squares[10][11] = 1
+        self.squares[10][12] = 1
+        self.squares[11][12] = 1
+        self.squares[12][11] = 1
+
+        # block
+        self.squares[0][0] = 1
+        self.squares[0][-1] = 1
+        self.squares[-1][0] = 1
+        self.squares[-1][-1] = 1
+
+        self.edit_button = arcade.Sprite(
+            "src/images/edit.png",
+            scale=0.05,
+            center_x=WINDOW_LEN - 110,
+            center_y=WINDOW_LEN - 32,
         )
-        arcade.draw_lrtb_rectangle_outline(
-            x, x + SQR_LEN, y + SQR_LEN, y, arcade.color.WHITE
+
+        self.exit_button = arcade.Sprite(
+            "src/images/exit.png",
+            scale=0.30,
+            center_x=WINDOW_LEN - 50,
+            center_y=WINDOW_LEN - 32,
         )
 
+        self.editing: bool = False
+        self.counter: int = 0
 
-arcade.open_window(SCREEN_LEN, SCREEN_LEN, "test")
-arcade.set_background_color(arcade.color.WHITE)
-arcade.schedule(draw, 0.25)
+    def on_draw(self):
+        arcade.start_render()
+
+        arcade.draw_rectangle_filled(
+            center_x=WINDOW_LEN // 2,
+            center_y=WINDOW_LEN // 2,
+            width=SCREEN_LEN,
+            height=SCREEN_LEN,
+            color=arcade.color.WHITE,
+        )
+
+        self.draw_squares()
+
+        if self.editing:
+            self.draw_infobox("EDITING")
+        else:
+            self.squares = game_of_life.step(self.squares)
+            self.counter += 1
+
+        arcade.draw_text(
+            f"Step {self.counter}",
+            WINDOW_LEN * 0.02,
+            WINDOW_LEN * 0.95,
+            arcade.color.BLACK,
+            20,
+            anchor_y="center",
+        )
+
+        self.edit_button.draw()
+        self.exit_button.draw()
+
+        time.sleep(0.1)
+
+    def on_mouse_press(self, x, y, _button, _modifiers):
+        if (
+            self.edit_button.left <= x <= self.edit_button.right
+            and self.edit_button.bottom <= y <= self.edit_button.top
+        ):
+            self.editing = not self.editing
+        elif (
+            self.exit_button.left <= x <= self.exit_button.right
+            and self.exit_button.bottom <= y <= self.exit_button.top
+        ):
+            arcade.window_commands.close_window()
+
+        elif self.editing:
+            i = map_index(y)
+            j = map_index(x)
+            if 0 <= i < LIST_LEN and 0 <= j < LIST_LEN:
+                self.squares[i][j] = not self.squares[i][j]
+
+    @staticmethod
+    def draw_infobox(text: str) -> None:
+        arcade.draw_rectangle_outline(
+            center_x=WINDOW_LEN // 2,
+            center_y=WINDOW_LEN * 0.05,
+            width=SCREEN_LEN // 3,
+            height=30,
+            color=arcade.color.BLACK,
+        )
+        arcade.draw_text(
+            text,
+            WINDOW_LEN // 2,
+            WINDOW_LEN * 0.05,
+            arcade.color.BLACK,
+            20,
+            anchor_x="center",
+            anchor_y="center",
+        )
+
+    def draw_squares(self):
+        for y in range(LIST_LEN):
+            my = map_sc(y)
+            for x in range(LIST_LEN):
+                mx = map_sc(x)
+                if self.squares[y][x]:
+                    arcade.draw_lrtb_rectangle_filled(
+                        mx + EDGE,
+                        mx + SQR_LEN - EDGE,
+                        my + SQR_LEN - EDGE,
+                        my + EDGE,
+                        arcade.color.BLACK,
+                    )
+
+#    def on_mouse_drag(self, x, y, dx, dy, _buttons, _modifiers):
+#        if self.editing:
+#            i = int((y + dy) / 16)
+#            j = int((x + dx) / 16)
+#            if (i, j) not in self.lru:
+#                self.squares[i][j] = not self.squares[i][j]
+#            if len(self.lru) == 2:
+#                self.lru.pop(0)
+#            self.lru.append((i, j))
+
+
+def map_sc(n: int) -> int:
+    return (n - LIST_LEN // 2) * SQR_LEN + int((WINDOW_LEN - SCREEN_LEN) * 2.5)
+
+def map_index(n: int) -> int:
+    return (n - int((WINDOW_LEN - SCREEN_LEN) * 2.5)) // SQR_LEN + LIST_LEN // 2
+
+window = Game()
 arcade.run()
