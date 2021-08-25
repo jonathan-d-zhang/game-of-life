@@ -10,13 +10,10 @@ const fn generate_lookup(alive: bool) -> [u8; u8::MAX as usize] {
         if (alive && ones == 2) || ones == 3 {
             lookup[i as usize] = 1;
         }
-
         i += 1
     }
-
     lookup
 }
-
 const DEAD_LOOKUP: [u8; u8::MAX as usize] = generate_lookup(false);
 const ALIVE_LOOKUP: [u8; u8::MAX as usize] = generate_lookup(true);
 */
